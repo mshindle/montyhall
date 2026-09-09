@@ -1,8 +1,8 @@
 package dev.irontech.montyhall;
 
-import dev.irontech.montyhall.simulation.AlwaysStayStrategy;
-import dev.irontech.montyhall.simulation.AlwaysSwitchStrategy;
-import dev.irontech.montyhall.simulation.CoinFlipStrategy;
+import dev.irontech.montyhall.simulation.strategies.AlwaysStayStrategy;
+import dev.irontech.montyhall.simulation.strategies.AlwaysSwitchStrategy;
+import dev.irontech.montyhall.simulation.strategies.CoinFlipStrategy;
 import dev.irontech.montyhall.simulation.GameStrategy;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

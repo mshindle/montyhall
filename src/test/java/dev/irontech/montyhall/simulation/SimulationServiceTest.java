@@ -1,5 +1,8 @@
 package dev.irontech.montyhall.simulation;
 
+import dev.irontech.montyhall.simulation.strategies.AlwaysStayStrategy;
+import dev.irontech.montyhall.simulation.strategies.AlwaysSwitchStrategy;
+import dev.irontech.montyhall.simulation.strategies.CoinFlipStrategy;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

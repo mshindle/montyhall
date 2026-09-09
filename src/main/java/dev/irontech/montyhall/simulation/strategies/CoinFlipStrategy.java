@@ -1,4 +1,6 @@
-package dev.irontech.montyhall.simulation;
+package dev.irontech.montyhall.simulation.strategies;
+
+import dev.irontech.montyhall.simulation.GameStrategy;
 
 import java.util.concurrent.ThreadLocalRandom;
 
