@@ -19,10 +19,10 @@ public final class MontyHallGame {
         ThreadLocalRandom random = ThreadLocalRandom.current();
 
         int carDoor = random.nextInt(DOOR_COUNT);
-        int playerDoor = random.nextInt(DOOR_COUNT);
+        int playerDoor = strategy.chooseDoor(DOOR_COUNT);
         int hostDoor = revealHostDoor(carDoor, playerDoor, random);
         int finalDoor = applyStrategy(strategy, playerDoor, hostDoor);
-
+        strategy.revealCarDoor(carDoor);
         return finalDoor == carDoor;
     }
 
@@ -35,7 +35,7 @@ public final class MontyHallGame {
     }
 
     private static int applyStrategy(GameStrategy strategy, int playerDoor, int hostDoor) {
-        if (!strategy.switchDoor()) {
+        if (!strategy.switchDoor(hostDoor)) {
             return playerDoor;
         }
 

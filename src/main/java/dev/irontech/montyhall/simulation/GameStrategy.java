@@ -2,5 +2,7 @@ package dev.irontech.montyhall.simulation;
 
 public interface GameStrategy {
     String displayName();
-    boolean switchDoor();
+    int chooseDoor(int doorCount);
+    boolean switchDoor(int hostDoor);
+    void revealCarDoor(int carDoor);
 }
