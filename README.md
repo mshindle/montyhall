@@ -1,190 +1,100 @@
 # Monty Hall Problem Simulator
 
-A Spring Boot web application that simulates the classic [Monty Hall problem](https://en.wikipedia.org/wiki/Monty_Hall_problem) at scale, comparing different door-switching strategies side-by-side.
+A multi-language repository containing simulations of the classic [Monty Hall problem](https://en.wikipedia.org/wiki/Monty_Hall_problem), implemented in **Java** (Spring Boot Web application with interactive UI and REST API) and **Python** (high-performance CLI tool using multiprocessing).
+
+---
 
 ## What is the Monty Hall Problem?
 
-You are on a game show. There are three doors: behind one is a car, behind the other two are goats. You pick a door. The host — who knows what's behind each door — opens one of the remaining doors to reveal a goat. Now you face a choice: stick with your original door, or switch to the other unopened door.
+The Monty Hall problem is a famous probability puzzle based on the American television game show *Let's Make a Deal*:
 
-Intuitively, it feels like a 50/50 decision. Mathematically it is not: **switching wins the car roughly 2/3 of the time**, while staying wins only 1/3 of the time.
+1. **The Setup**: You are presented with three closed doors. Behind one door is a prize (**Car**), and behind the other two doors are booby prizes (**Goats**).
+2. **Initial Choice**: You pick one door (e.g., Door 1).
+3. **The Reveal**: The host (Monty Hall), who knows what is behind every door, opens one of the other two doors (e.g., Door 3) to reveal a goat.
+4. **The Dilemma**: Monty gives you a choice: stick with your initial pick (Door 1) or switch to the remaining unopened door (Door 2).
 
-This simulator runs thousands (or millions) of rounds per strategy so you can see the probabilities converge in real time.
+### The Math
+While intuition suggests a 50/50 chance, switching doubles your chances of winning:
+- **Always Stay**: Wins **1/3 (~33.33%)** of the time (the initial probability of picking the car).
+- **Always Switch**: Wins **2/3 (~66.67%)** of the time (wins whenever the initial pick was a goat).
+- **Coin Flip (Random 50/50)**: Wins **1/2 (~50.00%)** of the time.
+
+This repository simulates hundreds of thousands or millions of rounds across strategies to demonstrate the theoretical probabilities converging empirically.
 
 ---
 
-## Prerequisites
+## Repository Structure
 
-- **Java 21** or later (the Gradle wrapper handles everything else)
-
----
-
-## Building
-
-```bash
-# Compile and package
-./gradlew build
-
-# Run the test suite only
-./gradlew test
 ```
-
----
-
-## Running
-
-```bash
-./gradlew bootRun
-```
-
-Then open your browser at **http://localhost:8080**.
-
----
-
-## Using the App
-
-1. Enter the **number of simulation runs per strategy** in the form (default: 100 000).
-2. Click **Run Simulation**.
-3. The results table shows each strategy's **car count**, **goat count**, and **win percentage**.
-
----
-
-## REST API
-
-### `POST /api/simulations`
-
-Run the simulation programmatically.
-
-**Request**
-
-```json
-{ "runs": 100000 }
-```
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `runs` | integer | Number of rounds to play per strategy (must be > 0) |
-
-**Example**
-
-```bash
-curl -s -X POST http://localhost:8080/api/simulations \
-     -H "Content-Type: application/json" \
-     -d '{"runs": 100000}' | jq .
-```
-
-**Response** — JSON array, one object per strategy:
-
-```json
-[
-  {
-    "strategy":      "Always Switch",
-    "carCount":      66712,
-    "goatCount":     33288,
-    "totalRuns":     100000,
-    "winPercentage": 66.71
-  },
-  {
-    "strategy":      "Always Stay",
-    "carCount":      33301,
-    "goatCount":     66699,
-    "totalRuns":     100000,
-    "winPercentage": 33.30
-  },
-  {
-    "strategy":      "Coin Flip",
-    "carCount":      49987,
-    "goatCount":     50013,
-    "totalRuns":     100000,
-    "winPercentage": 49.99
-  }
-]
+montyhall/
+├── java/                        # Java / Spring Boot application
+│   ├── src/main/java/           # Simulation engine, strategies, REST controller
+│   ├── src/main/resources/      # Static web UI (HTML/CSS/JS) & configuration
+│   ├── src/test/java/           # Unit & integration test suite
+│   ├── build.gradle             # Gradle build configuration
+│   └── README.md                # Java-specific documentation
+│
+├── python/                      # Python package & CLI application
+│   ├── montyhall/               # Simulation logic, game engine, strategies, CLI entrypoint
+│   ├── pyproject.toml           # Project metadata & dependencies (Hatchling)
+│   └── uv.lock                  # Lockfile
+│
+├── HELP.md                      # Reference links
+├── LICENSE                      # Project license
+└── README.md                    # Root project documentation (this file)
 ```
 
 ---
 
-## Project Structure
+## Implementations
 
-```
-src/main/
-├── java/dev/irontech/montyhall/
-│   ├── MontyHallApplication.java      # @SpringBootApplication; registers strategy beans
-│   ├── simulation/
-│   │   ├── GameStrategy.java          # Interface all strategies must implement
-│   │   ├── MontyHallGame.java         # Plays a single round given a strategy
-│   │   ├── SimulationResult.java      # Result record (counts + win %)
-│   │   ├── SimulationService.java     # Runs all strategies in parallel
-│   │   └── strategies/
-│   │       ├── AlwaysSwitchStrategy.java  # Built-in: always switch doors
-│   │       ├── AlwaysStayStrategy.java    # Built-in: never switch doors
-│   │       └── CoinFlipStrategy.java      # Built-in: switch randomly 50 / 50
-│   └── web/
-│       ├── SimulationController.java  # POST /api/simulations endpoint
-│       └── SimulationRequest.java     # Request body DTO
-└── resources/
-    └── static/                        # Single-page UI (HTML + CSS + JS)
-```
+### 1. Java (Spring Boot Web App)
+
+Located in `java/`. Provides an interactive web UI and a REST API to run simulations across configured strategies in parallel using Java virtual/platform threads.
+
+- **Prerequisites**: Java 21+
+- **Run the Web Application**:
+  ```bash
+  cd java
+  ./gradlew bootRun
+  ```
+  Open **http://localhost:8080** in your browser to use the graphical simulator.
+- **Run Tests**:
+  ```bash
+  cd java
+  ./gradlew test
+  ```
+- **REST API Endpoint**:
+  ```bash
+  curl -s -X POST http://localhost:8080/api/simulations \
+       -H "Content-Type: application/json" \
+       -d '{"runs": 100000}'
+  ```
+
+For more details on extending strategies or configuration, see [`java/README.md`](java/README.md).
 
 ---
 
-## Adding Your Own Strategy
+### 2. Python (CLI & Multiprocessing Engine)
 
-Any class that implements the `GameStrategy` interface is automatically picked up by the simulator.
+Located in `python/`. Provides a CLI simulation engine that leverages Python's `concurrent.futures.ProcessPoolExecutor` to distribute batches of simulation rounds across CPU cores.
 
-### The interface
+- **Prerequisites**: Python 3.14+ (or Python 3.10+ compatible runtime) / [`uv`](https://github.com/astral-sh/uv)
+- **Run the CLI Simulator**:
+  ```bash
+  cd python
+  python3 -m montyhall.main
+  ```
+  Or using `uv`:
+  ```bash
+  cd python
+  uv run montyhall
+  ```
 
-```java
-public interface GameStrategy {
-    /** Name shown in the UI and API results. */
-    String displayName();
+---
 
-    /** Return true to switch doors, false to stay. */
-    boolean switchDoor();
-}
-```
+## JetBrains IDE Configuration
 
-### Step 1 — Implement the interface
-
-Create a new file alongside the other strategies, e.g. `src/main/java/dev/irontech/montyhall/simulation/strategies/MyCustomStrategy.java`:
-
-```java
-package dev.irontech.montyhall.simulation.strategies;
-
-public class MyCustomStrategy implements GameStrategy {
-
-    @Override
-    public String displayName() {
-        return "My Custom Strategy";
-    }
-
-    @Override
-    public boolean switchDoor() {
-        // Replace with your own logic.
-        // Return true to switch, false to stay.
-        return Math.random() < 0.75; // switches 75 % of the time
-    }
-}
-```
-
-### Step 2 — Register the strategy
-
-Open `MontyHallApplication.java` and add your class to the `gameStrategies()` bean:
-
-```java
-@Bean
-public List<GameStrategy> gameStrategies() {
-    return List.of(
-        new AlwaysSwitchStrategy(),
-        new AlwaysStayStrategy(),
-        new CoinFlipStrategy(),
-        new MyCustomStrategy()   // <-- add your strategy here
-    );
-}
-```
-
-### Step 3 — Rebuild and run
-
-```bash
-./gradlew bootRun
-```
-
-Your strategy will appear automatically in the results table and in the REST API response.
+To work on this repository inside IntelliJ IDEA / PyCharm:
+1. **Java Module**: Link `java/build.gradle` as a Gradle project via the **Gradle** tool window.
+2. **Python Module**: Add `python/` as a Python module in **Project Structure** (`File` -> `Project Structure` -> `Modules`) and attach a Python interpreter / virtualenv.
