@@ -8,6 +8,8 @@ from dataclasses import dataclass, replace
 
 @dataclass
 class SimulationResult:
+    """Represents the results of a simulation run."""
+
     strategy: str
     car_count: int
     goat_count: int
